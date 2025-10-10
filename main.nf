@@ -3,6 +3,7 @@
 nextflow.enable.dsl=2
 
 /* set modules */
+include { KRAKENID } from './modules/krakenID'
 include { SRST2_RECN } from './modules/srst2_recN'
 include { SRST2_MLST } from './modules/srst2_mlst'
 include { SRST2_SEROTYPE } from './modules/srst2_serotype'
@@ -18,6 +19,11 @@ workflow {
 
     //trim(readPairs)
 
+    KRAKENID(
+        readPairs,
+        params.kraken2db,
+        params.lowmem
+        )
     SRST2_RECN(readPairs)
     SRST2_MLST(readPairs)
     SRST2_SEROTYPE(readPairs)
