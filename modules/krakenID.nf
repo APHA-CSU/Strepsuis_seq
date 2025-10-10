@@ -1,7 +1,7 @@
 process KRAKENID {
 	errorStrategy 'finish'
     tag "$pair_id"
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/KrakenID", mode: 'copy', pattern: '*tab'
+	publishDir "$params.outdir/Results_${params.dataDir}_${params.today}/KrakenID", mode: 'copy', pattern: '*tab'
 	maxForks 1
 	
 	input:
