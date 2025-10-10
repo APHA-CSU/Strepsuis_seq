@@ -34,7 +34,7 @@ workflow {
     VERIFY_SEROTYPE(verify_reads)
     SRST2_RECN.out.recN_genes
         .map { it[1] }
-        .collectFile( name: "recN_table.tsv", sort: true, keepHeader: true, storeDir: "${params.outdir}" )
+        .collectFile( name: "recN_table.tsv", sort: true, keepHeader: true, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}" )
         .set { recN }
     SRST2_MLST.out
         .map { it[1] }
