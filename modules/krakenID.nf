@@ -11,7 +11,8 @@ process KRAKENID {
 	
 	output:
 		tuple val(pair_id), path("${pair_id}_brackensort.tab"), path("${pair_id}_kraken2.tab"), optional: true, emit: krakenOut
-	
+        tuple val(pair_id), path("${pair_id}_Ssuis.csv"), optional: true, emit: krakenStats
+
 	script:
 	"""
     # Error handling
@@ -23,7 +24,12 @@ process KRAKENID {
         # Process Kraken2 output
         sed 's/\\t\\t1\\troot/\\tR\\t1\\troot/g' interim_kraken2.tab |
         sed 's/\\t1\\t131567\\t/\\tR1\\t131567\\t/g' |
-        sed 's/\\t\\t2\\t/\\tD\\t2\\t/g' > ${pair_id}_kraken2.tab
+        sed 's/\\t\\t2\\t/\\tD\\t2\\t/g' |
+        sed 's/\\t\\t2157\\t/\\tD\\t2157\\t/g' |
+        sed 's/\\t\\t10239\\t/\\tD\\t10239\\t/g' |
+        sed 's/\\t1\\t35237\\t/\\tP1\\t35237\\t/g' |
+        sed 's/\\t1\\t439488\\t/\\tP1\\t439488\\t/g' |
+        sed 's/\\t\\t2169561\\t/\\tO\\t2169561\\t/g' > ${pair_id}_kraken2.tab
 
         # HACK: Ignore Bracken errors when read counts are low
         set +e
