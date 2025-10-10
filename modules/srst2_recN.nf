@@ -2,7 +2,7 @@ process SRST2_RECN {
     tag "$pairId"
     errorStrategy 'ignore'
     maxForks 1
-    publishDir "${params.outdir}/recN", mode: "copy"
+    publishDir "${params.outdir}/Results_${params.dataDir}_${params.today}/recN", mode: "copy"
 
     input:
         tuple val(pairId), file(R1), file(R2)

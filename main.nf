@@ -38,19 +38,23 @@ workflow {
         .set { recN }
     SRST2_MLST.out
         .map { it[1] }
-        .collectFile( name: "mlst_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}" )
+        .collectFile( name: "mlst_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}" )
         .set { mlst }
     SRST2_SEROTYPE.out.serotype_results
         .map { it[1] }
-        .collectFile( name: "serotype_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}" )
+        .collectFile( name: "serotype_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}" )
         .set { serotype }
     SRST2_VIRULENCE.out.virulence_genes
         .map { it[1] }
-        .collectFile( name: "virulence_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}" )
+        .collectFile( name: "virulence_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}" )
         .set { virulence }
     VERIFY_SEROTYPE.out
         .map { it[1] }
-        .collectFile( name: "verification.csv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}" )
+        .collectFile( name: "verification.csv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}" )
         .set { verify }
+    KRAKENID.out.krakenStats
+        .map { it[1] }
+        .collectFile( name: "krakenconfirm.csv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}" )
+        .set { kraken }
     COMBINE_OUTPUTS(recN, mlst, serotype, virulence, verify)
 }

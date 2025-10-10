@@ -1,6 +1,6 @@
 process COMBINE_OUTPUTS {
     tag "combine"
-    publishDir "${params.outdir}/CombinedResults", mode: "copy"
+    publishDir "${params.outdir}/Results_${params.dataDir}_${params.today}/CombinedResults", mode: "copy"
 
     input:
         file("recN.tsv")

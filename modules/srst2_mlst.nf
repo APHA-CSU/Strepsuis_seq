@@ -1,7 +1,7 @@
 process SRST2_MLST {
     tag "$pairId"
     errorStrategy 'ignore'
-    publishDir "${params.outdir}/MLST", mode: "copy"
+    publishDir "${params.outdir}/Results_${params.dataDir}_${params.today}/MLST", mode: "copy"
 
     input:
         tuple val(pairId), file(R1), file(R2)

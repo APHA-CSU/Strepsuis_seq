@@ -1,6 +1,6 @@
 process VERIFY_SEROTYPE {
     tag "$pairId"
-    publishDir "${params.outdir}/serotype", mode: "copy"
+    publishDir "${params.outdir}/Results_${params.dataDir}_${params.today}/serotype", mode: "copy"
     input:
         tuple val(pairId), val(serotype), file(R1), file(R2)
 
