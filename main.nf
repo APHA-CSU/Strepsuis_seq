@@ -52,9 +52,9 @@ workflow {
         .map { it[1] }
         .collectFile( name: "verification.csv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}/serotype" )
         .set { verify }
-    KRAKENID.out.krakenStats
+    KRAKENID.out.krakenstats
         .map { it[1] }
-        .collectFile( name: "krakenconfirm.csv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}/krakenID" )
+        .collectFile( name: "krakenID.csv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}/krakenID" )
         .set { kraken }
-    COMBINE_OUTPUTS(recN, mlst, serotype, virulence, verify)
+    COMBINE_OUTPUTS(recN, mlst, serotype, virulence, verify, kraken)
 }

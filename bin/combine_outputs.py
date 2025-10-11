@@ -7,7 +7,7 @@ import argparse
 from datetime import date
 
 
-def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, dataDir):
+def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, krakenID, dataDir):
 
     # Get info for logging
     date_out = date.today().strftime('%d%b%y')
@@ -71,10 +71,16 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
         (virulence_df[3].str.contains('sly'))
     virulence_df = virulence_df[['Sample', 'epf', 'mrp', 'sly']]
 
+    # read krakenID data
+    krakenID_df = pd.read_csv(krakenID)
+    krakenID_df['Sample']=krakenID_df['Sample'].astype(object)
+
     # Merge dataframes
     sero_mlst_df = pd.merge(verified_serotype_df, MLST_df, on='Sample', how='outer')
 
-    finalout_df = pd.merge(pd.merge(recN_df, sero_mlst_df, on='Sample', how='outer'),
+    id_df = pd.merge(krakenID_df, recN_df, on='Sample', how='outer')
+
+    finalout_df = pd.merge(pd.merge(id_df, sero_mlst_df, on='Sample', how='outer'),
                            virulence_df, on='Sample', how='outer')
     finalout_df.set_index('Sample', inplace=True)
 
@@ -105,6 +111,7 @@ if __name__ == '__main__':
     parser.add_argument('serotypeTable', help='...............')
     parser.add_argument('virulenceTable', help='................')
     parser.add_argument('verifyCSV', help='................')
+    parser.add_argument('krakenID', help='..............')
     parser.add_argument('dataDir', help='.............')
     # parser.add_argument('commitId', help='Nextflow capture of git commit')
 
