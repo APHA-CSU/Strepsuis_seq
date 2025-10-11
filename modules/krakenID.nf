@@ -27,8 +27,8 @@ process KRAKENID {
         sed 's/\\t\\t2\\t/\\tD\\t2\\t/g' |
         sed 's/\\t\\t2157\\t/\\tD\\t2157\\t/g' |
         sed 's/\\t\\t10239\\t/\\tD\\t10239\\t/g' |
-        sed 's/\\t1\\t35237\\t/\\tP1\\t35237\\t/g' |
-        sed 's/\\t1\\t439488\\t/\\tP1\\t439488\\t/g' |
+        sed 's/\\t1\\t35237\\t/\\tD1\\t35237\\t/g' |
+        sed 's/\\t1\\t439488\\t/\\tD1\\t439488\\t/g' |
         sed 's/\\t\\t2169561\\t/\\tO\\t2169561\\t/g' > ${pair_id}_kraken2.tab
 
         # HACK: Ignore Bracken errors when read counts are low
