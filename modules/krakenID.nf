@@ -54,7 +54,7 @@ process KRAKENID {
         echo "${pair_id},\$SsPos" >> "${pair_id}_Ssuis.csv"
 
         # Write krakenID to csv
-        echo "Sample,ID,TotalReads,Abundance" > "${pair_id}_krakenID.csv"
+        echo "Sample,krakenID,TotalReads,Abundance" > "${pair_id}_krakenID.csv"
         echo "${pair_id},\$Top" >> "${pair_id}_krakenID.csv"
 
 	"""
