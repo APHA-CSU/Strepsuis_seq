@@ -11,7 +11,8 @@ process KRAKENID {
 	
 	output:
 		tuple val(pair_id), path("${pair_id}_brackensort.tab"), path("${pair_id}_kraken2.tab"), optional: true, emit: krakenOut
-        tuple val(pair_id), path("${pair_id}_Ssuis.csv"), optional: true, emit: krakenStats
+        tuple val(pair_id), path("${pair_id}_Ssuis.csv"), optional: true, emit: krakensuis
+        tuple val(pair_id), path("${pair_id}_krakenID.csv"), optional: true, emit: krakenstats
 
 	script:
 	"""
@@ -44,9 +45,17 @@ process KRAKENID {
         SsPos=\$(grep -m 1 'Streptococcus suis' ${pair_id}_brackensort.tab |
         awk '{printf \$1" "\$2","\$7"," "%.3f", (\$8*100)}' || true)
 
+        # Extract top match
+        Top=\$(head -1 ${pair_id}_brackensort.tab |
+        awk '{printf \$1" "\$2","\$7"," "%.3f", (\$8*100)}' || true)
+
         # Write Ssuis information to CSV
         echo "Sample,ID,TotalReads,Abundance" > "${pair_id}_Ssuis.csv"
         echo "${pair_id},\$SsPos" >> "${pair_id}_Ssuis.csv"
+
+        # Write krakenID to csv
+        echo "Sample,ID,TotalReads,Abundance" > "${pair_id}_krakenID.csv"
+        echo "${pair_id},\$Top" >> "${pair_id}_krakenID.csv"
 
 	"""
 }
