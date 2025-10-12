@@ -31,6 +31,8 @@ process KRAKENID {
         sed 's/\\t1\\t35237\\t/\\tD1\\t35237\\t/g' |
         sed 's/\\t1\\t29258\\t/\\tD1\\t29258\\t/g' |
         sed 's/\\t1\\t35325\\t/\\tD1\\t35325\\t/g' |
+        sed 's/\\t1\\t12429\\t/\\tD1\\t12429\\t/g' |
+        sed 's/\\t1\\t12877\\t/\\tD1\\t12877\\t/g' |
         sed 's/\\t1\\t439488\\t/\\tD1\\t439488\\t/g' |
         sed 's/\\t\\t2169561\\t/\\tO\\t2169561\\t/g' > ${pair_id}_kraken2.tab
 
