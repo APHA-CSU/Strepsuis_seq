@@ -8,7 +8,7 @@ process CHECKINPUT {
 
     output:
         tuple val(pair_id), path("${pair_id}_stats.csv"), emit: stats
-        tuple val(pair_id), path("${pair_id}_checked_R1.fastq.gz"), path("${pair_id}_checked_R2.fastq.gz"), optional: true, emit: fastqreads
+        tuple val(pair_id), path("${pair_id}_*_R1.fastq.gz"), path("${pair_id}_*_R2.fastq.gz"), emit: fastqreads
 
     script:
 
@@ -25,18 +25,22 @@ process CHECKINPUT {
         
         # Random subsample of large files
         if [[ \$raw_R1 -gt \$maxreads ]]; then
-            fastq_subsample.py ${R1} ${R2} \$maxreads &&
+            fastq_subsample.py ${R1} ${R2} \$maxreads
             flag="DownSampled"
+            num_raw=\$maxreads
         elif [[ \$raw_R1 -le \$maxreads ]] && [[ \$raw_R1 -ge \$minreads ]]; then
-            TODO: rename input
-        else [[ \$raw_R1 -lt \$minreads ]]; then
+            mv ${R1} ${pair_id}_checked_R1.fastq.gz
+            mv ${R2} ${pair_id}_checked_R2.fastq.gz
+            num_raw=\$raw_R1
+        elif [[ \$raw_R1 -lt \$minreads ]]; then
             flag="InsufficientData"
-
-
+            mv ${R1} ${pair_id}_lowdata_R1.fastq.gz
+            mv ${R2} ${pair_id}_lowdata_R2.fastq.gz
+            num_raw=\$raw_R1
+        fi
 
         # Write values to CSV file
-        echo "Sample,NumRawReads,NumDedupReads,%afterDedup,NumTrimReads,%afterTrim,NumMappedReads,%Mapped,MeanDepth,GenomeCov,Outcome" > "${pair_id}_stats.csv"
-        echo "${pair_id},\${num_raw},\${num_uniq},\${pc_aft_dedup},\${num_trim},\${pc_aft_trim},\${num_map},\${pc_mapped},\${avg_depth},\${genome_cov},\${flag}" >> "${pair_id}_stats.csv"
-        echo "\${flag}" > "${pair_id}_outcome.txt"
+        echo "Sample,Flag,NumRawReads > "${pair_id}_stats.csv"
+        echo "${pair_id},\$flag,\${num_raw} >> "${pair_id}_stats.csv"
         """
 }
