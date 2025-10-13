@@ -7,11 +7,11 @@ import gzip
 def write_random_records(fqa, fqb, N):
     sample = fqa.split("_")[:-1]
     """get random headers without reading the whole thing into memory"""
-    records = sum(1 for _ in open(fqa)) / 4
+    records = sum(1 for _ in gzip.open(fqa, 'rb')) // 4
     rand_records = sorted([random.randint(0, records - 1) for _ in range(N)])
 
     fha, fhb = gzip.open(fqa, 'rb'), gzip.open(fqb, 'rb')
-    suba, subb = gzip.open(sample[0] + "-" + str(N) + "-subset_R1.fastq.gz", "wb"), gzip.open(sample[0] + "-" + str(N) + "-subset_R2.fastq.gz", "wb")
+    suba, subb = gzip.open(sample[0] + "_subset_R1.fastq.gz", "wb"), gzip.open(sample[0] + "_subset_R2.fastq.gz", "wb")
     rec_no = - 1
     for rr in rand_records:
         while rec_no < rr:
