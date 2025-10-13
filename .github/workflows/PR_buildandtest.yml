@@ -25,7 +25,7 @@ jobs:
           sudo docker push ${{ secrets.CSU_ACCOUNT_NUMBER }}.dkr.ecr.eu-west-1.amazonaws.com/gitrun-csu-1016:${{ github.head_ref }}
 
   CI_testing:
-    runs-on: ubuntu:latest
+    runs-on: self-hosted
     # add someting to only run after build is complete
     steps:
       - name: Checkout code
