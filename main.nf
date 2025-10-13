@@ -3,6 +3,7 @@
 nextflow.enable.dsl=2
 
 /* set modules */
+include { CHECKINPUT } from './modules/checkinput'
 include { KRAKENID } from './modules/krakenID'
 include { SRST2_RECN } from './modules/srst2_recN'
 include { SRST2_MLST } from './modules/srst2_mlst'
@@ -19,15 +20,17 @@ workflow {
 
     //trim(readPairs)
 
+    CHECKINPUT(readPairs)
+    
     KRAKENID(
-        readPairs,
+        CHECKINPUT.out.fastqreads,
         params.kraken2db,
         params.lowmem
         )
-    SRST2_RECN(readPairs)
-    SRST2_MLST(readPairs)
-    SRST2_SEROTYPE(readPairs)
-    SRST2_VIRULENCE(readPairs)
+    SRST2_RECN(CHECKINPUT.out.fastqreads)
+    SRST2_MLST(CHECKINPUT.out.fastqreads)
+    SRST2_SEROTYPE(CHECKINPUT.out.fastqreads)
+    SRST2_VIRULENCE(CHECKINPUT.out.fastqreads)
     SRST2_SEROTYPE.out.srst2_sero
         .join( readPairs )
         .set { verify_reads }
