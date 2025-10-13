@@ -59,5 +59,8 @@ workflow {
         .map { it[1] }
         .collectFile( name: "krakenID.csv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}/krakenID" )
         .set { kraken }
+    CHECKINPUT.out.stats
+        .map { it[1] }
+        .collectFile( name: "readstats.csv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}" )
     COMBINE_OUTPUTS(recN, mlst, serotype, virulence, verify, kraken)
 }
