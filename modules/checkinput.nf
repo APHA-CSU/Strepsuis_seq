@@ -40,7 +40,7 @@ process CHECKINPUT {
         fi
 
         # Write values to CSV file
-        echo "Sample,Flag,NumRawReads > "${pair_id}_stats.csv"
-        echo "${pair_id},\$flag,\${num_raw} >> "${pair_id}_stats.csv"
+        echo "Sample,Flag,NumRawReads" > "${pair_id}_stats.csv"
+        echo "${pair_id},\$flag,\${num_raw}" >> "${pair_id}_stats.csv"
         """
 }
