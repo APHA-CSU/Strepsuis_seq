@@ -29,6 +29,7 @@ process CHECKINPUT {
             flag="DownSampled"
             num_raw=\$maxreads
         elif [[ \$raw_R1 -le \$maxreads ]] && [[ \$raw_R1 -ge \$minreads ]]; then
+            flag=""
             mv ${R1} ${pair_id}_checked_R1.fastq.gz
             mv ${R2} ${pair_id}_checked_R2.fastq.gz
             num_raw=\$raw_R1
