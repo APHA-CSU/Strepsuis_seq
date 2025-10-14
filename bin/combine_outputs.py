@@ -92,13 +92,22 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     # Add additional infomation, missing values, flags for lower quality data and sort
     finalout_df['Serotype'].fillna('Undetermined', inplace=True)
     finalout_df[['epf', 'mrp', 'sly']] = finalout_df[['epf', 'mrp', 'sly']].fillna('FALSE')
-    #finalout_df.loc[(finalout_df['depth_x'] < 15.0) | (finalout_df['depth_x'] < 15.0), 'QualFlag'] \
-    #                = 'LowDepth'
-    #finalout_df.loc[(finalout_df['depth_x'] < 10.0) | (finalout_df['depth_x'] < 10.0), 'QualFlag'] \
-    #                = 'InsufficentData'
-    #finalout_df['QualFlag'].replace('nan', '', inplace=True)
-    #qualcol = finalout_df.pop('QualFlag')
-    #finalout_df.insert(0, 'QualFlag', qualcol)
+    finalout_df.loc[(finalout_df['Flag'] == 'LowData') & (finalout_df['Serotype'] == 'Undetermined'),
+                    'Result'] = 'RepeatRequired'
+    finalout_df.loc[(finalout_df['Flag'] == '') & (finalout_df['krakenID'] != 'Streptococcus suis'),
+                    'Result'] = 'Not Strep. suis'
+    finalout_df.loc[(finalout_df['Flag'] == 'DownSampled') & (finalout_df['krakenID'] != 'Streptococcus suis'),
+                    'Result'] = 'Not Strep. suis'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos'),
+                    'Result'] = 'Strep. suis'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos*'),
+                    'Result'] = 'Strep. suis'
+    
+    finalout_df['Result'].replace('nan', '', inplace=True)
+    rescol = finalout_df.pop('Result')
+    finalout_df.insert(0, 'Result', rescol)
+    serocol = finalout_df.pop('Serotype')
+    finalout_df.insert(1, 'Serotype', serocol)
     finalout_df.sort_index(inplace=True)
 
     # Write to csv
