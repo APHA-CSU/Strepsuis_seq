@@ -13,7 +13,7 @@ process SRST2_SEROTYPE {
     
     script:
     """
-    srst2.py --input_pe $R1 $R2 --forward _*_R1 --reverse _*_R2 \
+    srst2.py --input_pe $R1 $R2 --forward _.*_R1 --reverse _.*_R2 \
              --output serotype_$pairId --mlst_db ${params.sero_db} --mlst_definitions ${params.sero_def}\
              --mlst_delimiter "-" --max_unaligned_overlap 75 --min_coverage 60 --max_divergence 20 --log
 
