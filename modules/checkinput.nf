@@ -34,7 +34,7 @@ process CHECKINPUT {
             mv ${R2} ${pair_id}_checked_R2.fastq.gz
             num_raw=\$raw_R1
         elif [[ \$raw_R1 -lt \$minreads ]]; then
-            flag="InsufficientData"
+            flag="LowData"
             mv ${R1} ${pair_id}_lowdata_R1.fastq.gz
             mv ${R2} ${pair_id}_lowdata_R2.fastq.gz
             num_raw=\$raw_R1
