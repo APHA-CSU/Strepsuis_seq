@@ -13,7 +13,9 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     date_out = date.today().strftime('%d%b%y')
 
     # read recN data
-    recN_df = pd.read_table(recNTable, sep='\t')
+    recN_df = pd.read_table(recNTable, sep='\t', names=list(range(2)), skiprows=1)
+    recN_df.rename({0: 'Sample'}, axis=1, inplace=True)
+    recN_df.rename({1: 'recN-Pos'}, axis=1, inplace=True)
     recN_df['Sample'] = recN_df['Sample'].astype(object)
     recN_df['recN-Pos'].fillna('noRecN', inplace=True)
 
