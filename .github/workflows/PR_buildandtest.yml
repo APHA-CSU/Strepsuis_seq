@@ -6,6 +6,10 @@ on:
        - main
      paths:
        - 'Dockerfile'
+env:
+  NODE_EXTRA_CA_CERTS: "/etc/ssl/certs/ca-certificates.crt"
+  SSL_CERT_DIR: "/etc/ssl/certs"
+
 jobs:
   Build:
     runs-on: self-hosted
