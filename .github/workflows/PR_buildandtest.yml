@@ -43,6 +43,11 @@ jobs:
         with:
           version: 'latest'
 
+      - name: Set secrets
+        run: |
+          nextflow secrets set ECR_ACCOUNT ${{ secrets.CSU_ACCOUNT_NUMBER }}
+          nextflow secrets set BRANCH ${{ github.head_ref }}
+
       - name: Install nf-test
         run: |
           wget -qO- https://get.nf-test.com | bash
