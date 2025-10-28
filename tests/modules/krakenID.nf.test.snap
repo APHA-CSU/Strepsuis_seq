@@ -4,40 +4,40 @@
             {
                 "0": [
                     [
-                        "test",
-                        "test_brackensort.tab:md5,a6e6a43e2f22b28842c42ad228e2a317",
-                        "test_kraken2.tab:md5,50cfbd5abcb58e715a92c6dc20d71de0"
+                        "input",
+                        "input_brackensort.tab:md5,a6e6a43e2f22b28842c42ad228e2a317",
+                        "input_kraken2.tab:md5,50cfbd5abcb58e715a92c6dc20d71de0"
                     ]
                 ],
                 "1": [
                     [
-                        "test",
-                        "test_Ssuis.csv:md5,816a7b8400cfd57d427e4bcd37f59011"
+                        "input",
+                        "input_Ssuis.csv:md5,8215d9fb46456e58b60d82cf3f41925a"
                     ]
                 ],
                 "2": [
                     [
-                        "test",
-                        "test_krakenID.csv:md5,14b2b37b9d7d37a9340ffd7539038ffb"
+                        "input",
+                        "input_krakenID.csv:md5,89a694b7973bedeb87a6a0dde1e8575a"
                     ]
                 ],
                 "krakenOut": [
                     [
-                        "test",
-                        "test_brackensort.tab:md5,a6e6a43e2f22b28842c42ad228e2a317",
-                        "test_kraken2.tab:md5,50cfbd5abcb58e715a92c6dc20d71de0"
+                        "input",
+                        "input_brackensort.tab:md5,a6e6a43e2f22b28842c42ad228e2a317",
+                        "input_kraken2.tab:md5,50cfbd5abcb58e715a92c6dc20d71de0"
                     ]
                 ],
                 "krakenstats": [
                     [
-                        "test",
-                        "test_krakenID.csv:md5,14b2b37b9d7d37a9340ffd7539038ffb"
+                        "input",
+                        "input_krakenID.csv:md5,89a694b7973bedeb87a6a0dde1e8575a"
                     ]
                 ],
                 "krakensuis": [
                     [
-                        "test",
-                        "test_Ssuis.csv:md5,816a7b8400cfd57d427e4bcd37f59011"
+                        "input",
+                        "input_Ssuis.csv:md5,8215d9fb46456e58b60d82cf3f41925a"
                     ]
                 ]
             }
@@ -46,6 +46,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-10-28T17:46:32.292003456"
+        "timestamp": "2025-10-28T21:56:40.784294976"
     }
 }
