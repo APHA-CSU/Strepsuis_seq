@@ -17,6 +17,7 @@ nextflow_process {
                 input[2] = file("${projectDir}/tests/data/serotype_table.tsv")
                 input[3] = file("${projectDir}/tests/data/virulence_table.tsv")
                 input[4] = file("${projectDir}/tests/data/verification.csv")
+                input[5] = file("${projectDir}/tests/data/krakenID.csv")
                 """
             }
         }
@@ -25,7 +26,7 @@ nextflow_process {
             assert process.success
 
             with(process.out[0]) {
-                assert path(get(0)).md5 == 'feed601f74d28ed2abfefa99c15635dc'
+                assert path(get(0)).md5 == '55e68ced7b1a98754d735e0ab6a759ad'
             }
         }
 

@@ -9,6 +9,7 @@ nextflow_pipeline {
             params {
                 reads = "${projectDir}/tests/data/*_{S*_R1,S*_R2}*.fastq.gz"
                 outdir = "tests/results"
+                lowmem = "--memory-mapping"
             }
         }
 

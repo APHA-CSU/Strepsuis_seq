@@ -2,7 +2,7 @@ process SRST2_SEROTYPE {
     tag "$pairId"
     errorStrategy 'ignore'
     maxForks 2
-    publishDir "${params.outdir}/serotype", mode: "copy"
+    publishDir "${params.outdir}/Results_${params.dataDir}_${params.today}/serotype", mode: "copy"
 
     input:
         tuple val(pairId), file(R1), file(R2)

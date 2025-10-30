@@ -2,7 +2,7 @@ process SRST2_VIRULENCE {
     tag "$pairId"
     errorStrategy 'ignore'
     maxForks 2
-    publishDir "${params.outdir}/virulence", mode: "copy"
+    publishDir "${params.outdir}/Results_${params.dataDir}_${params.today}/virulence", mode: "copy"
 
     input:
         tuple val(pairId), file(R1), file(R2)

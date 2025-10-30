@@ -1,0 +1,31 @@
+nextflow_process {
+
+    name "Test Process KRAKENID"
+    script "modules/krakenID.nf"
+    process "KRAKENID"
+
+    test("Should use karaken to provide species ID") {
+
+        when {
+            params {
+                "tests/results"
+                kraken2db = "/opt/Kraken2/db/minikraken2_v1_8GB/"
+                lowmem = "--memory-mapping"
+            }
+            process {
+                """
+                input[0] = ["input", file("${projectDir}/tests/data/input_S999_R1_001.fastq.gz"), file("${projectDir}/tests/data/input_S999_R2_001.fastq.gz")]
+                input[1] = params.kraken2db
+                input[2] = params.lowmem
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

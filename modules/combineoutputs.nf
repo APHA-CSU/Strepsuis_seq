@@ -1,6 +1,6 @@
 process COMBINE_OUTPUTS {
     tag "combine"
-    publishDir "${params.outdir}/CombinedResults", mode: "copy"
+    publishDir "${params.outdir}/Results_${params.dataDir}_${params.today}", mode: "copy"
 
     input:
         file("recN.tsv")
@@ -8,12 +8,13 @@ process COMBINE_OUTPUTS {
         file("serotype.tsv")
         file("virulence.tsv")
         file("verify.csv")
+        file("krakenID.csv")
 
     output:
         file("*.csv")
 
     script:
     """
-        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv verify.csv ${params.dataDir}
+        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv verify.csv krakenID.csv ${params.dataDir}
     """
 }
