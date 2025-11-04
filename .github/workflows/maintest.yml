@@ -1,4 +1,4 @@
-name: Strepsuis_seq test
+name: Strepsuis_seq nf-test
 
 on:
   push:
