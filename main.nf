@@ -13,7 +13,7 @@ include { VERIFY_SEROTYPE } from './modules/verifySerotype'
 include { COMBINE_OUTPUTS } from './modules/combineoutputs'
 
 workflow {
-    Channel
+    channel
         .fromFilePairs( params.reads, flat: true )
             .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
             .set { readPairs }
@@ -36,27 +36,27 @@ workflow {
         .set { verify_reads }
     VERIFY_SEROTYPE(verify_reads)
     SRST2_RECN.out.recN_genes
-        .map { it[1] }
+        .map { it -> it[1] }
         .collectFile( name: "recN_table.tsv", sort: true, keepHeader: true, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}/recN" )
         .set { recN }
     SRST2_MLST.out
-        .map { it[1] }
+        .map { it -> it[1] }
         .collectFile( name: "mlst_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}/MLST" )
         .set { mlst }
     SRST2_SEROTYPE.out.serotype_results
-        .map { it[1] }
+        .map { it -> it[1] }
         .collectFile( name: "serotype_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}/serotype" )
         .set { serotype }
     SRST2_VIRULENCE.out.virulence_genes
-        .map { it[1] }
+        .map { it -> it[1] }
         .collectFile( name: "virulence_table.tsv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}/virulence" )
         .set { virulence }
     VERIFY_SEROTYPE.out
-        .map { it[1] }
+        .map { it -> it[1] }
         .collectFile( name: "verification.csv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}/serotype" )
         .set { verify }
     KRAKENID.out.krakenstats
-        .map { it[1] }
+        .map { it -> it[1] }
         .collectFile( name: "krakenID.csv", sort: true, keepHeader: true, skip: 1, storeDir: "${params.outdir}/Results_${params.dataDir}_${params.today}/krakenID" )
         .set { kraken }
     CHECKINPUT.out.stats
