@@ -1,0 +1,39 @@
+{
+    "Should check the input files": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "test",
+                        "test_stats.csv:md5,d1c9057b4c0e1ff559a33f39b99f2749"
+                    ]
+                ],
+                "1": [
+                    [
+                        "test",
+                        "test_checked_R1.fastq.gz:md5,b85779b631f740c2426e047b75c4fd16",
+                        "test_checked_R2.fastq.gz:md5,507111661ce11b9f85cd04f86856041e"
+                    ]
+                ],
+                "fastqreads": [
+                    [
+                        "test",
+                        "test_checked_R1.fastq.gz:md5,b85779b631f740c2426e047b75c4fd16",
+                        "test_checked_R2.fastq.gz:md5,507111661ce11b9f85cd04f86856041e"
+                    ]
+                ],
+                "stats": [
+                    [
+                        "test",
+                        "test_stats.csv:md5,d1c9057b4c0e1ff559a33f39b99f2749"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.04.8"
+        },
+        "timestamp": "2025-11-05T11:24:53.344638026"
+    }
+}

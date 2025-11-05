@@ -1,0 +1,27 @@
+nextflow_process {
+
+    name "Test Process CHECKINPUT"
+    script "modules/checkinput.nf"
+    process "CHECKINPUT"
+
+    test("Should check the input files") {
+
+        when {
+            params {
+                outdir = "tests/results"
+            }
+            process {
+                """
+                input[0] = ["test", file("${projectDir}/tests/data/input_S999_R1_001.fastq.gz"), file("${projectDir}/tests/data/input_S999_R2_001.fastq.gz")]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}
