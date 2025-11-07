@@ -28,6 +28,9 @@ jobs:
         uses: nf-core/setup-nextflow@6c2e22b4d901f0c42ca66c5069f8026df026d165
         with:
           version: '25.04.8'
+
+      - name: Docker cleanup
+        run: sudo docker system prune -af
  
       - name: ECR Login
         run: |
