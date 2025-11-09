@@ -11,18 +11,6 @@ import argparse
 import re
 from datetime import date
 
-#def mismatch_parse(scraped):
-#    diffs = re.split(r'/', scraped)
-#    matches = re.search(r"(\d+snp)?(\d+indel)?(\d+holes)?", diffs[-1]).groups()
-#    if matches[0]:
-#        snp = int(re.split(r'snp?', matches[0])[0])     
-#    else: snp = 0
-#    if matches[1]:
-#        indel = int(re.split(r'indel?', matches[1])[0])
-#    else: indel = 0
-#    if matches[2]:
-#        hole = int(re.split(r'holes?', matches[2])[0])
-#    else: hole = 0
 
 def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, krakenID, statsCSV, dataDir):
 
@@ -51,6 +39,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     # Check the mismatch data and remove serotype assignment if snps, indels or holes above thresholds
     _st = []
     
+    # regex for extracting nuber of snps, indels and holes fromeach sample
     for index, row in serotype_df.iterrows():
         mismatch_data = row['mismatches']
         diffs = re.split(r'/', mismatch_data)
@@ -64,7 +53,8 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
         if matches[2]:
             hole = int(re.split(r'holes?', matches[2])[0])
         else: hole = 0
-        
+
+    # remove serotype assignment if anomolies exceed thresholds    
         if snp > 20: row['Serotype'] = ''
         if indel > 5: row['Serotype'] = ''
         if hole > 10: row['Serotype'] = ''
@@ -72,7 +62,6 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
         _st.append(r)
 
     parsedST_df = pd.DataFrame(_st)
-
     
 
     # read serotype verification
