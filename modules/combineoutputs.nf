@@ -9,12 +9,13 @@ process COMBINE_OUTPUTS {
         file("virulence.tsv")
         file("verify.csv")
         file("krakenID.csv")
+        file("readstats.csv")
 
     output:
         file("*.csv")
 
     script:
     """
-        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv verify.csv krakenID.csv ${params.dataDir}
+        combine_outputs.py recN.tsv MLST.tsv serotype.tsv virulence.tsv verify.csv krakenID.csv readstats.csv ${params.dataDir}
     """
 }

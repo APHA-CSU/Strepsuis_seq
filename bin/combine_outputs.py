@@ -7,13 +7,15 @@ import argparse
 from datetime import date
 
 
-def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, krakenID, dataDir):
+def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, krakenID, statsCSV, dataDir):
 
     # Get info for logging
     date_out = date.today().strftime('%d%b%y')
 
     # read recN data
-    recN_df = pd.read_table(recNTable, sep='\t')
+    recN_df = pd.read_table(recNTable, sep='\t', names=list(range(2)), skiprows=1)
+    recN_df.rename({0: 'Sample'}, axis=1, inplace=True)
+    recN_df.rename({1: 'recN-Pos'}, axis=1, inplace=True)
     recN_df['Sample'] = recN_df['Sample'].astype(object)
     recN_df['recN-Pos'].fillna('noRecN', inplace=True)
 
@@ -73,12 +75,17 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
 
     # read krakenID data
     krakenID_df = pd.read_csv(krakenID)
-    krakenID_df['Sample']=krakenID_df['Sample'].astype(object)
+    krakenID_df['Sample'] = krakenID_df['Sample'].astype(object)
+
+    # read statsCSV
+    readstats_df = pd.read_csv(statsCSV)
+    readstats_df['Sample'] = readstats_df['Sample'].astype(object)
 
     # Merge dataframes
     sero_mlst_df = pd.merge(verified_serotype_df, MLST_df, on='Sample', how='outer')
 
-    id_df = pd.merge(krakenID_df, recN_df, on='Sample', how='outer')
+    id_df = pd.merge(pd.merge(readstats_df, krakenID_df, on='Sample', how='outer'), 
+                     recN_df, on='Sample', how='outer')
 
     finalout_df = pd.merge(pd.merge(id_df, sero_mlst_df, on='Sample', how='outer'),
                            virulence_df, on='Sample', how='outer')
@@ -87,13 +94,22 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     # Add additional infomation, missing values, flags for lower quality data and sort
     finalout_df['Serotype'].fillna('Undetermined', inplace=True)
     finalout_df[['epf', 'mrp', 'sly']] = finalout_df[['epf', 'mrp', 'sly']].fillna('FALSE')
-    finalout_df.loc[(finalout_df['depth_x'] < 15.0) | (finalout_df['depth_x'] < 15.0), 'QualFlag'] \
-                    = 'LowDepth'
-    finalout_df.loc[(finalout_df['depth_x'] < 10.0) | (finalout_df['depth_x'] < 10.0), 'QualFlag'] \
-                    = 'InsufficentData'
-    finalout_df['QualFlag'].replace('nan', '', inplace=True)
-    qualcol = finalout_df.pop('QualFlag')
-    finalout_df.insert(0, 'QualFlag', qualcol)
+    finalout_df.loc[(finalout_df['Flag'] == 'LowData') & (finalout_df['Serotype'] == 'Undetermined'),
+                    'Result'] = 'RepeatRequired'
+    finalout_df.loc[(finalout_df['Flag'] == '') & (finalout_df['krakenID'] != 'Streptococcus suis'),
+                    'Result'] = 'Not Strep. suis'
+    finalout_df.loc[(finalout_df['Flag'] == 'DownSampled') & (finalout_df['krakenID'] != 'Streptococcus suis'),
+                    'Result'] = 'Not Strep. suis'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos'),
+                    'Result'] = 'Strep. suis'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos*'),
+                    'Result'] = 'Strep. suis'
+    
+    finalout_df['Result'].replace('nan', '', inplace=True)
+    rescol = finalout_df.pop('Result')
+    finalout_df.insert(0, 'Result', rescol)
+    serocol = finalout_df.pop('Serotype')
+    finalout_df.insert(1, 'Serotype', serocol)
     finalout_df.sort_index(inplace=True)
 
     # Write to csv
@@ -112,6 +128,7 @@ if __name__ == '__main__':
     parser.add_argument('virulenceTable', help='................')
     parser.add_argument('verifyCSV', help='................')
     parser.add_argument('krakenID', help='..............')
+    parser.add_argument('statsCSV', help='..............')
     parser.add_argument('dataDir', help='.............')
     # parser.add_argument('commitId', help='Nextflow capture of git commit')
 

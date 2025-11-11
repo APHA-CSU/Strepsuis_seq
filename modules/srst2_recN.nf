@@ -13,7 +13,7 @@ process SRST2_RECN {
 	
     script:
     """
-    srst2.py --input_pe $R1 $R2 --forward _S.*_R1_001 --reverse _S.*_R2_001 --output recN_$pairId\
+    srst2.py --input_pe $R1 $R2 --forward _.*_R1 --reverse _.*_R2 --output recN_$pairId\
              --gene_db ${params.recN_ref} --max_unaligned_overlap 75 --log
     """
 }
