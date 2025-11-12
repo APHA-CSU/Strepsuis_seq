@@ -35,6 +35,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     serotype_df.rename({'ST': 'Serotype'}, axis=1, inplace=True)
     serotype_df['Serotype'] = serotype_df['Serotype'].astype(str)
     serotype_df['Serotype'] = serotype_df['Serotype'].str.replace(r'\D', '', regex=True)
+    serotype_df['mismatches'] = serotype_df['mismatches'].astype(str)
     
     # Check the mismatch data and remove serotype assignment if snps, indels or holes above thresholds
     _st = []
@@ -45,7 +46,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
         diffs = re.split(r'/', mismatch_data)
         matches = re.search(r"(\d+snp)?(\d+indel)?(\d+holes)?", diffs[-1]).groups()
         if matches[0]:
-            snp = int(re.split(r'snp?', matches[0])[0])     
+            snp = int(re.split(r'snp?', matches[0])[0])
         else: snp = 0
         if matches[1]:
             indel = int(re.split(r'indel?', matches[1])[0])
