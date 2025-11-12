@@ -56,9 +56,9 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
         else: hole = 0
 
     # remove serotype assignment if anomolies exceed thresholds    
-        if snp > 20: row['Serotype'] = ''
-        if indel > 5: row['Serotype'] = ''
-        if hole > 10: row['Serotype'] = ''
+        if snp > 20: row['Serotype'] = 'NoMatch'
+        if indel > 5: row['Serotype'] = 'NoMatch'
+        if hole > 10: row['Serotype'] = 'NoMatch'
         r = row.to_dict()
         _st.append(r)
 
@@ -128,14 +128,14 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     # Add additional infomation, missing values, flags for lower quality data and sort
     finalout_df['Serotype'].fillna('Undetermined', inplace=True)
     finalout_df[['epf', 'mrp', 'sly']] = finalout_df[['epf', 'mrp', 'sly']].fillna('FALSE')
-    finalout_df.loc[(finalout_df['Flag'] == 'LowData') & (finalout_df['Serotype'] == 'Undetermined'),
-                    'Result'] = 'RepeatRequired'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['Flag'] == 'LowData') 
+                    & (finalout_df['Serotype'] == 'Undetermined'), 'Result'] = 'RepeatRequired'
     finalout_df.loc[(finalout_df['Flag'] == '') & (finalout_df['krakenID'] != 'Streptococcus suis'),
                     'Result'] = 'Not Strep. suis'
     finalout_df.loc[(finalout_df['Flag'] == 'DownSampled') & (finalout_df['krakenID'] != 'Streptococcus suis'),
                     'Result'] = 'Not Strep. suis'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['Abundance'] < 80 ),
-                    'Result'] = 'Not Strep. suis'
+                    'Result'] = 'Other Strep. spp.'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos'),
                     'Result'] = 'Strep. suis'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos*'),
