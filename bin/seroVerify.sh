@@ -19,7 +19,7 @@ if [[ "$serotype" == "1" || "$serotype" == "1*" || "$serotype" == "1*?" || "$ser
     # extract basecall and  evidence from vcf
     vcf483=$(awk '{if ($2 == "483") print $0}' "$sample"_cps2K.vcf) # extract full line
     ref483=$(echo $vcf483 | awk '{print $4}')
-    alt483=$(echo $vcf483 | awk '{print $5}')
+    alt483=$(echo $vcf483 | awk '{print $5}' | awk -F ',' '{print $1}')
     evidence=$(echo $vcf483 | grep -o 'DP4=[0-9]*,[0-9]*,[0-9]*,[0-9]*' | awk -F '=' '{print $2}')
    
     if [ $alt483 = '.' ]; then
