@@ -117,6 +117,8 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
 
     # Merge dataframes
     sero_mlst_df = pd.merge(verified_serotype_df, MLST_df, on='Sample', how='outer')
+    # Remove serotype assigment if coverage is anomolous compared to MLST loci
+    sero_mlst_df.loc[(sero_mlst_df['depth_x'].div(sero_mlst_df['depth_y']) <= 0.25), 'Serotype'] = 'NoMatch'
 
     id_df = pd.merge(pd.merge(readstats_df, krakenID_df, on='Sample', how='outer'), 
                      recN_df, on='Sample', how='outer')
