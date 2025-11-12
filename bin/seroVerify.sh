@@ -17,15 +17,15 @@ if [[ "$serotype" == "1" || "$serotype" == "1*" || "$serotype" == "1*?" || "$ser
     samtools mpileup -DBuf $index.fas sorted.bam | bcftools view -c - > "$sample"_cps2K.vcf 
 
     # extract basecall and  evidence from vcf
-    ref483=$(awk '{if ($2 == "483") print $4}' "$sample"_cps2K.vcf)
-    alt483=$(awk '{if ($2 == "483") print $5}' "$sample"_cps2K.vcf | awk -F ',' '{print $1}')
-    
+    vcf483=$(awk '{if ($2 == "483") print $0}' "$sample"_cps2K.vcf) # extract full line
+    ref483=$(echo $vcf483 | awk '{print $4}')
+    alt483=$(echo $vcf483 | awk '{print $5}')
+    evidence=$(echo $vcf483 | grep -o 'DP4=[0-9]*,[0-9]*,[0-9]*,[0-9]*' | awk -F '=' '{print $2}')
+   
     if [ $alt483 = '.' ]; then
         base483=$ref483
-        evidence=$(awk '{if ($2 == "483") print $8}' "$sample"_cps2K.vcf | awk -F ';' '{print $4}' | awk -F '=' '{print $2}')
     else
         base483=$alt483
-        evidence=$(awk '{if ($2 == "483") print $8}' "$sample"_cps2K.vcf | awk -F ';' '{print $5}' | awk -F '=' '{print $2}')
     fi
 
     echo "Sample,Pos483,RefF,RefR,AltF,AltR" > "$sample"_seroVerify.csv
