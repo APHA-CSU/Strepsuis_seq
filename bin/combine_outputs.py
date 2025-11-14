@@ -1,9 +1,14 @@
 #! /usr/bin/env python3
 
-# Combine outputs from all four srst2 runs to generate a single results file in csv format
+"""
+Combine outputs from all four srst2 runs to generate a single results file in csv format,
+together with kraken outputs and read stats. 
+"""
+
 
 import pandas as pd
 import argparse
+import re
 from datetime import date
 
 
@@ -30,6 +35,35 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     serotype_df.rename({'ST': 'Serotype'}, axis=1, inplace=True)
     serotype_df['Serotype'] = serotype_df['Serotype'].astype(str)
     serotype_df['Serotype'] = serotype_df['Serotype'].str.replace(r'\D', '', regex=True)
+    serotype_df['mismatches'] = serotype_df['mismatches'].astype(str)
+    
+    # Check the mismatch data and remove serotype assignment if snps, indels or holes above thresholds
+    _st = []
+    
+    # regex for extracting nuber of snps, indels and holes fromeach sample
+    for index, row in serotype_df.iterrows():
+        mismatch_data = row['mismatches']
+        diffs = re.split(r'/', mismatch_data)
+        matches = re.search(r"(\d+snp)?(\d+indel)?(\d+holes)?", diffs[-1]).groups()
+        if matches[0]:
+            snp = int(re.split(r'snp?', matches[0])[0])
+        else: snp = 0
+        if matches[1]:
+            indel = int(re.split(r'indel?', matches[1])[0])
+        else: indel = 0
+        if matches[2]:
+            hole = int(re.split(r'holes?', matches[2])[0])
+        else: hole = 0
+
+    # remove serotype assignment if anomolies exceed thresholds    
+        if snp > 20: row['Serotype'] = 'NoMatch'
+        if indel > 5: row['Serotype'] = 'NoMatch'
+        if hole > 10: row['Serotype'] = 'NoMatch'
+        r = row.to_dict()
+        _st.append(r)
+
+    parsedST_df = pd.DataFrame(_st)
+    
 
     # read serotype verification
     verify_df = pd.read_csv(verifyCSV)
@@ -37,7 +71,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
         verify_df[['Sample', 'Pos483', 'RefF', 'RefR', 'AltF', 'AltR']].astype(object)
 
     # update serotypes based on verification
-    verified_serotype_df = pd.merge(serotype_df, verify_df, on='Sample', how='left')
+    verified_serotype_df = pd.merge(parsedST_df, verify_df, on='Sample', how='left')
     # Quote from https://rdcu.be/d56Ee:
     # ## "The analysis revealed that all serotype 2 and all serotype 14 strains had a G nucleotide at position 483 of
     # ## the cpsK gene, while all serotype 1 and all serotype 1/2 strains contained either a C or T at that nucleotide
@@ -83,6 +117,8 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
 
     # Merge dataframes
     sero_mlst_df = pd.merge(verified_serotype_df, MLST_df, on='Sample', how='outer')
+    # Remove serotype assigment if coverage is anomolous compared to MLST loci
+    sero_mlst_df.loc[(sero_mlst_df['depth_x'].div(sero_mlst_df['depth_y']) <= 0.25), 'Serotype'] = 'NoMatch'
 
     id_df = pd.merge(pd.merge(readstats_df, krakenID_df, on='Sample', how='outer'), 
                      recN_df, on='Sample', how='outer')
@@ -94,12 +130,14 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     # Add additional infomation, missing values, flags for lower quality data and sort
     finalout_df['Serotype'].fillna('Undetermined', inplace=True)
     finalout_df[['epf', 'mrp', 'sly']] = finalout_df[['epf', 'mrp', 'sly']].fillna('FALSE')
-    finalout_df.loc[(finalout_df['Flag'] == 'LowData') & (finalout_df['Serotype'] == 'Undetermined'),
-                    'Result'] = 'RepeatRequired'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['Flag'] == 'LowData') 
+                    & (finalout_df['Serotype'] == 'Undetermined'), 'Result'] = 'RepeatRequired'
     finalout_df.loc[(finalout_df['Flag'] == '') & (finalout_df['krakenID'] != 'Streptococcus suis'),
                     'Result'] = 'Not Strep. suis'
     finalout_df.loc[(finalout_df['Flag'] == 'DownSampled') & (finalout_df['krakenID'] != 'Streptococcus suis'),
                     'Result'] = 'Not Strep. suis'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['Abundance'] < 80 ),
+                    'Result'] = 'Other Strep. spp.'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos'),
                     'Result'] = 'Strep. suis'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos*'),
