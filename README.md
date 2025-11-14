@@ -3,7 +3,7 @@
 
 # Strepsuis_seq
 
-This is the repo for APHA's Nextflow implementation of the [_Streptococcus suis_ serotyping pipeline](https://github.com/streplab/SsuisSerotyping_pipeline).  It essentially makes use of SRST2 to map reads to mlst, virulence and serotyping databases. To reduce running time input files are downsampled if required and Kraken2 is used to confirm species ID alongside the presence of a recN allele thought to be species specific.
+This is the repo for APHA's Nextflow implementation of the [_Streptococcus suis_ serotyping pipeline](https://github.com/streplab/SsuisSerotyping_pipeline).  It essentially makes use of SRST2 to map reads to mlst, virulence and serotyping databases. To reduce running time input files are downsampled if required and Kraken2 is used to confirm species ID alongside the presence of a recN allele thought to be species specific.  Some serotypes can only be differentiated based on a single SNP and this is achived using a bespoke module.
 
 Calculations of best match are in the [SRST2 publication](
 https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-014-0090-6)
@@ -43,5 +43,5 @@ flowchart TB
 
 ```
 
-_Streptococcus suis_ MLST database last updated 01-Oct-25 [_Streptococcus suis_ pubMLST](https://pubmlst.org/organisms/streptococcus-suis)
+_Streptococcus suis_ MLST database last updated 01-Oct-25 from: [_Streptococcus suis_ pubMLST](https://pubmlst.org/organisms/streptococcus-suis)
 
