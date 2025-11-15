@@ -1,7 +1,7 @@
 [![Strepsuis_seq nf-test](https://github.com/aphascience/Strepsuis_seq/actions/workflows/maintest.yml/badge.svg)](https://github.com/aphascience/Strepsuis_seq/actions/workflows/maintest.yml)
 
 
-## Strepsuis_seq
+## **Strepsuis_seq**
 
 This is the repo for APHA's Nextflow implementation of the [_Streptococcus suis_ serotyping pipeline](https://github.com/streplab/SsuisSerotyping_pipeline).  It essentially makes use of SRST2 to map reads to mlst, virulence and serotyping databases. To reduce running time input files are downsampled if required and Kraken2 is used to confirm species ID alongside the presence of a recN allele thought to be species specific.  Some serotypes can only be differentiated based on a single SNP and this is achived using a bespoke module.
 
@@ -52,5 +52,12 @@ nextflow run aphascience/Strepsuis_seq/ -with-docker <docker_registry/imagename>
 ```
 The Dockerfile in the repository contains all the information to build the image with required software tools, and the relavent databases for srst2 are in the 'assets' directory.
 
-_Streptococcus suis_ MLST database last updated 01-Oct-25 from: [_Streptococcus suis_ pubMLST](https://pubmlst.org/organisms/streptococcus-suis)
+# Databases
 
+_Streptococcus suis_ MLST database last updated 01-Oct-25 from: [_Streptococcus suis_ pubMLST](https://pubmlst.org/organisms/streptococcus-suis)
+recN, virulence and serotype databases are obtained from: [_Streptococcus suis_ serotyping pipeline](https://github.com/streplab/SsuisSerotyping_pipeline)
+Kraken2 uses the [minikraken2 v1 database](https://genome-idx.s3.amazonaws.com/kraken/minikraken2_v1_8GB_201904.tgz)
+
+# CI testing
+
+Testing has been built using the [nf-test](https://www.nf-test.com/) framework and ensure that each module perfomrs as expected
