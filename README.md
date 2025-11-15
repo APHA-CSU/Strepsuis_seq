@@ -62,4 +62,4 @@ Kraken2 uses the [minikraken2 v1 database](https://genome-idx.s3.amazonaws.com/k
 
 # CI testing
 
-Testing has been built using the [nf-test](https://www.nf-test.com/) framework and ensure that each module perfomrs as expected
+Testing has been built using the [nf-test](https://www.nf-test.com/) framework and ensures that each module performs as expected
