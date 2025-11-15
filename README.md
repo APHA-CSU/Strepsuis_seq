@@ -55,7 +55,9 @@ The Dockerfile in the repository contains all the information to build the image
 # Databases
 
 _Streptococcus suis_ MLST database last updated 01-Oct-25 from: [_Streptococcus suis_ pubMLST](https://pubmlst.org/organisms/streptococcus-suis)
+
 recN, virulence and serotype databases are obtained from: [_Streptococcus suis_ serotyping pipeline](https://github.com/streplab/SsuisSerotyping_pipeline)
+
 Kraken2 uses the [minikraken2 v1 database](https://genome-idx.s3.amazonaws.com/kraken/minikraken2_v1_8GB_201904.tgz)
 
 # CI testing
