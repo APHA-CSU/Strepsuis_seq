@@ -151,7 +151,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     finalout_df.sort_index(inplace=True)
 
     # Write to csv
-    finalout_df.to_csv("{}_FinalOut_{}.csv".format(dataDir, date_out))
+    finalout_df.to_csv("{}_Ssuis-FinalOut_{}.csv".format(dataDir, date_out))
 
     # Append log info
     # with open("{}_FinalOut_{}.csv".format(date_out), "a") as outFile:

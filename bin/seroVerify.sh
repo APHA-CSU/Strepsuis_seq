@@ -33,4 +33,6 @@ if [[ "$serotype" == "1" || "$serotype" == "1*" || "$serotype" == "1*?" || "$ser
 
 else
     echo "Verification not required"
+    echo "Sample,Pos483,RefF,RefR,AltF,AltR" > "$sample"_seroVerify.csv
+    echo "$sample",-,-,-,-,-,"$evidence" >> "$sample"_seroVerify.csv
 fi
