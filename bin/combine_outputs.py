@@ -40,7 +40,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     # Check the mismatch data and remove serotype assignment if snps, indels or holes above thresholds
     _st = []
     
-    # regex for extracting nuber of snps, indels and holes fromeach sample
+    # regex for extracting nuber of snps, indels and holes from each sample
     for index, row in serotype_df.iterrows():
         mismatch_data = row['mismatches']
         diffs = re.split(r'/', mismatch_data)
@@ -55,10 +55,22 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
             hole = int(re.split(r'holes?', matches[2])[0])
         else: hole = 0
 
+    # Set anomoly thresholds based on depth
+    for index, row in serotype_df.iterrows():
+        depth_data = row['depth']
+        if depth_data >= 20:
+            max_snp = 20
+            max_indel = 5
+            max_hole = 10
+        else:
+            max_snp = 30
+            max_indel = 10
+            max_hole = 20
+
     # remove serotype assignment if anomolies exceed thresholds    
-        if snp > 20: row['Serotype'] = 'NoMatch'
-        if indel > 5: row['Serotype'] = 'NoMatch'
-        if hole > 10: row['Serotype'] = 'NoMatch'
+        if snp > max_snp: row['Serotype'] = 'NoMatch'
+        if indel > max_indel: row['Serotype'] = 'NoMatch'
+        if hole > max_hole: row['Serotype'] = 'NoMatch'
         r = row.to_dict()
         _st.append(r)
 
