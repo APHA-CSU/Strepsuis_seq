@@ -118,6 +118,8 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     virulence_df['sly'] = (virulence_df[1].str.contains('sly')) | (virulence_df[2].str.contains('sly')) | \
         (virulence_df[3].str.contains('sly'))
     virulence_df = virulence_df[['Sample', 'epf', 'mrp', 'sly']]
+    virulence_df = virulence_df.astype(str)
+    virulence_df.replace('False', '-', inplace=True)
 
     # read krakenID data
     krakenID_df = pd.read_csv(krakenID)
@@ -144,7 +146,6 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
 
     # Add additional infomation, missing values, flags for lower quality data and sort
     finalout_df['Serotype'].fillna('Undetermined', inplace=True)
-    finalout_df[['epf', 'mrp', 'sly']] = finalout_df[['epf', 'mrp', 'sly']].fillna('FALSE')
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['Flag'] == 'LowData') 
                     & (finalout_df['Serotype'] == 'Undetermined'), 'Result'] = 'RepeatRequired'
     finalout_df.loc[(finalout_df['Flag'] != 'LowData') & (finalout_df['krakenID'] != 'Streptococcus suis'),
