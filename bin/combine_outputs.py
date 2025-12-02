@@ -130,7 +130,10 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     # Merge dataframes
     sero_mlst_df = pd.merge(verified_serotype_df, MLST_df, on='Sample', how='outer')
     # Remove serotype assigment if coverage is anomolous compared to MLST loci
-    sero_mlst_df.loc[(sero_mlst_df['depth_x'].div(sero_mlst_df['depth_y']) <= 0.25), 'Serotype'] = 'NoMatch'
+    sero_mlst_df.loc[(sero_mlst_df['depth_x'].div(sero_mlst_df['depth_y']) <= 0.25),
+                     'Serotype'] += '? ' + sero_mlst_df['Serotype']
+    sero_mlst_df.loc[(sero_mlst_df['depth_x'].div(sero_mlst_df['depth_y']) <= 0.12),
+                     'Serotype'] = 'NoMatch'
 
     id_df = pd.merge(pd.merge(readstats_df, krakenID_df, on='Sample', how='outer'), 
                      recN_df, on='Sample', how='outer')
@@ -144,17 +147,25 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     finalout_df[['epf', 'mrp', 'sly']] = finalout_df[['epf', 'mrp', 'sly']].fillna('FALSE')
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['Flag'] == 'LowData') 
                     & (finalout_df['Serotype'] == 'Undetermined'), 'Result'] = 'RepeatRequired'
-    finalout_df.loc[(finalout_df['Flag'] == '') & (finalout_df['krakenID'] != 'Streptococcus suis'),
+    finalout_df.loc[(finalout_df['Flag'] != 'LowData') & (finalout_df['krakenID'] != 'Streptococcus suis'),
                     'Result'] = 'Not Strep. suis'
-    finalout_df.loc[(finalout_df['Flag'] == 'DownSampled') & (finalout_df['krakenID'] != 'Streptococcus suis'),
+    finalout_df.loc[(finalout_df['Flag'] != 'LowData') & (finalout_df['krakenID'] != 'Streptococcus suis'),
                     'Result'] = 'Not Strep. suis'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['Abundance'] < 80 ),
                     'Result'] = 'Other Strep. spp.'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'NoRecN' ),
+                    'Result'] = 'Probable other Strep. spp.'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos'),
                     'Result'] = 'Strep. suis'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos*'),
                     'Result'] = 'Strep. suis'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos?'),
+                    'Result'] = 'Strep. suis'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos*?'),
+                    'Result'] = 'Strep. suis'
     
+    # TODO - ensure other combinations are covered..... 
+
     finalout_df['Result'].replace('nan', '', inplace=True)
     rescol = finalout_df.pop('Result')
     finalout_df.insert(0, 'Result', rescol)
