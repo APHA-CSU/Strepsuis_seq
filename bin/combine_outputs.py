@@ -153,8 +153,8 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
                     'Result'] = 'Not Strep. suis'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['Abundance'] < 80 ),
                     'Result'] = 'Other Strep. spp.'
-    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'NoRecN' ),
-                    'Result'] = 'Probable other Strep. spp.'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'noRecN' ),
+                    'Result'] = 'Possible other Strep. spp.'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos'),
                     'Result'] = 'Strep. suis'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos*'),
