@@ -8,7 +8,8 @@ read2=$3
 sample=$4
 serotype=$5
 
-if [[ "$serotype" == "1" || "$serotype" == "1*" || "$serotype" == "1*?" || "$serotype" == "2" || "$serotype" == "2*" || "$serotype" == "2*?" ]]; then
+if [[ "$serotype" == "1" || "$serotype" == "1*" || "$serotype" == "1*?" || "$serotype" == "1?" ||
+         "$serotype" == "2" || "$serotype" == "2*" || "$serotype" == "2*?" || "$serotype" == "2?" ]]; then
     # map to cps2K
     bowtie2 -x $index -1 $read1 -2 $read2 -a --very-sensitive-local --no-unal |
         samtools view -S1 - | samtools sort - sorted
@@ -34,5 +35,5 @@ if [[ "$serotype" == "1" || "$serotype" == "1*" || "$serotype" == "1*?" || "$ser
 else
     echo "Verification not required"
     echo "Sample,Pos483,RefF,RefR,AltF,AltR" > "$sample"_seroVerify.csv
-    echo "$sample",-,-,-,-,-,"$evidence" >> "$sample"_seroVerify.csv
+    echo "$sample",-,-,-,-,-"$evidence" >> "$sample"_seroVerify.csv
 fi

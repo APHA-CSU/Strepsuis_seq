@@ -75,7 +75,6 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
         _st.append(r)
 
     parsedST_df = pd.DataFrame(_st)
-    
 
     # read serotype verification
     verify_df = pd.read_csv(verifyCSV)
