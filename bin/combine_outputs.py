@@ -149,8 +149,6 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
                     & (finalout_df['Serotype'] == 'Undetermined'), 'Result'] = 'RepeatRequired'
     finalout_df.loc[(finalout_df['Flag'] != 'LowData') & (finalout_df['krakenID'] != 'Streptococcus suis'),
                     'Result'] = 'Not Strep. suis'
-    finalout_df.loc[(finalout_df['Flag'] != 'LowData') & (finalout_df['krakenID'] != 'Streptococcus suis'),
-                    'Result'] = 'Not Strep. suis'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['Abundance'] < 80 ),
                     'Result'] = 'Other Strep. spp.'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'noRecN' ),
