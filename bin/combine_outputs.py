@@ -56,7 +56,6 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
         else: hole = 0
 
     # Set anomoly thresholds based on depth
-    for index, row in serotype_df.iterrows():
         depth_data = row['depth']
         if depth_data >= 20:
             max_snp = 20
