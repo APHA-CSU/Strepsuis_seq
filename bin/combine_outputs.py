@@ -66,10 +66,10 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
             max_indel = 10
             max_hole = 20
 
-    # remove serotype assignment if anomolies exceed thresholds    
-        if snp > max_snp: row['Serotype'] = 'NoMatch'
-        if indel > max_indel: row['Serotype'] = 'NoMatch'
-        if hole > max_hole: row['Serotype'] = 'NoMatch'
+    # flag serotype assignment if anomolies exceed thresholds    
+        if snp > max_snp: row['Serotype'] += ' (LowMatch)'
+        if indel > max_indel: row['Serotype'] += ' (LowMatch)'
+        if hole > max_hole: row['Serotype'] += ' (LowMatch)'
         r = row.to_dict()
         _st.append(r)
 
