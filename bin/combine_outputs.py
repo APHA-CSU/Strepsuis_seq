@@ -40,7 +40,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     # Check the mismatch data and remove serotype assignment if snps, indels or holes above thresholds
     _st = []
     
-    # regex for extracting nuber of snps, indels and holes fromeach sample
+    # regex for extracting nuber of snps, indels and holes from each sample
     for index, row in serotype_df.iterrows():
         mismatch_data = row['mismatches']
         diffs = re.split(r'/', mismatch_data)
@@ -55,15 +55,25 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
             hole = int(re.split(r'holes?', matches[2])[0])
         else: hole = 0
 
-    # remove serotype assignment if anomolies exceed thresholds    
-        if snp > 20: row['Serotype'] = 'NoMatch'
-        if indel > 5: row['Serotype'] = 'NoMatch'
-        if hole > 10: row['Serotype'] = 'NoMatch'
+    # Set anomoly thresholds based on depth
+        depth_data = row['depth']
+        if depth_data >= 20:
+            max_snp = 20
+            max_indel = 5
+            max_hole = 10
+        else:
+            max_snp = 30
+            max_indel = 10
+            max_hole = 20
+
+    # flag serotype assignment if anomolies exceed thresholds    
+        if snp > max_snp: row['Serotype'] += ' (LowMatch)'
+        if indel > max_indel: row['Serotype'] += ' (LowMatch)'
+        if hole > max_hole: row['Serotype'] += ' (LowMatch)'
         r = row.to_dict()
         _st.append(r)
 
     parsedST_df = pd.DataFrame(_st)
-    
 
     # read serotype verification
     verify_df = pd.read_csv(verifyCSV)
@@ -106,6 +116,8 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     virulence_df['sly'] = (virulence_df[1].str.contains('sly')) | (virulence_df[2].str.contains('sly')) | \
         (virulence_df[3].str.contains('sly'))
     virulence_df = virulence_df[['Sample', 'epf', 'mrp', 'sly']]
+    virulence_df = virulence_df.astype(str)
+    virulence_df.replace('False', '-', inplace=True)
 
     # read krakenID data
     krakenID_df = pd.read_csv(krakenID)
@@ -118,7 +130,10 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     # Merge dataframes
     sero_mlst_df = pd.merge(verified_serotype_df, MLST_df, on='Sample', how='outer')
     # Remove serotype assigment if coverage is anomolous compared to MLST loci
-    sero_mlst_df.loc[(sero_mlst_df['depth_x'].div(sero_mlst_df['depth_y']) <= 0.25), 'Serotype'] = 'NoMatch'
+    sero_mlst_df.loc[(sero_mlst_df['depth_x'].div(sero_mlst_df['depth_y']) <= 0.25),
+                     'Serotype'] += '?'
+    sero_mlst_df.loc[(sero_mlst_df['depth_x'].div(sero_mlst_df['depth_y']) <= 0.12),
+                     'Serotype'] = 'NoMatch'
 
     id_df = pd.merge(pd.merge(readstats_df, krakenID_df, on='Sample', how='outer'), 
                      recN_df, on='Sample', how='outer')
@@ -129,20 +144,25 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
 
     # Add additional infomation, missing values, flags for lower quality data and sort
     finalout_df['Serotype'].fillna('Undetermined', inplace=True)
-    finalout_df[['epf', 'mrp', 'sly']] = finalout_df[['epf', 'mrp', 'sly']].fillna('FALSE')
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['Flag'] == 'LowData') 
                     & (finalout_df['Serotype'] == 'Undetermined'), 'Result'] = 'RepeatRequired'
-    finalout_df.loc[(finalout_df['Flag'] == '') & (finalout_df['krakenID'] != 'Streptococcus suis'),
-                    'Result'] = 'Not Strep. suis'
-    finalout_df.loc[(finalout_df['Flag'] == 'DownSampled') & (finalout_df['krakenID'] != 'Streptococcus suis'),
+    finalout_df.loc[(finalout_df['Flag'] != 'LowData') & (finalout_df['krakenID'] != 'Streptococcus suis'),
                     'Result'] = 'Not Strep. suis'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['Abundance'] < 80 ),
                     'Result'] = 'Other Strep. spp.'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'noRecN' ),
+                    'Result'] = 'Possible other Strep. spp.'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos'),
                     'Result'] = 'Strep. suis'
     finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos*'),
                     'Result'] = 'Strep. suis'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos?'),
+                    'Result'] = 'Strep. suis'
+    finalout_df.loc[(finalout_df['krakenID'] == 'Streptococcus suis') & (finalout_df['recN-Pos'] == 'recN-Pos*?'),
+                    'Result'] = 'Strep. suis'
     
+    # TODO - ensure other combinations are covered..... 
+
     finalout_df['Result'].replace('nan', '', inplace=True)
     rescol = finalout_df.pop('Result')
     finalout_df.insert(0, 'Result', rescol)
@@ -151,7 +171,7 @@ def combineData(recNTable, MLSTTable, serotypeTable, virulenceTable, verifyCSV, 
     finalout_df.sort_index(inplace=True)
 
     # Write to csv
-    finalout_df.to_csv("{}_Ssuis-FinalOut_{}.csv".format(dataDir, date_out))
+    finalout_df.to_csv("{}_Ssuis-FinalOut_{}.csv".format(dataDir, date_out), float_format='%.2f')
 
     # Append log info
     # with open("{}_FinalOut_{}.csv".format(date_out), "a") as outFile:
